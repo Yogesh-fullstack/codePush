@@ -1,33 +1,34 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    IMAGE_NAME = "ydocker12/codepush"
-  }
-
-  stages {
-    stage('Build JAR') {
-      steps {
-        sh './gradlew build -x test'
-      }
+    environment {
+        IMAGE_NAME = "ydocker12/codepush"
     }
 
-    stage('Docker Build & Push') {
-      steps {
-        script {
-          docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
-            def image = docker.build("${IMAGE_NAME}")
-            image.push("latest")
-          }
+    stages {
+        stage('Build JAR') {
+            steps {
+                bat './gradlew.bat build -x test'
+            }
         }
-      }
-    }
 
-    stage('Deploy') {
-      steps {
-        sh 'docker rm -f codepush-app || true'
-        sh 'docker run -d -p 8080:8080 --name codepush-app ydocker12/codepush:latest'
-      }
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
+                        def image = docker.build("${IMAGE_NAME}")
+                        image.push("latest")
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                bat 'docker rm -f codepush-app || exit 0'
+                bat 'docker run -d -p 8080:8080 --name codepush-app ydocker12/codepush:latest'
+            }
+        }
     }
-  }
 }
+
