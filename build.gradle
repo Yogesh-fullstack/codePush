@@ -2,13 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
-
-
-	FROM openjdk:17
-	ARG JAR_FILE=build/libs/codepush-0.0.1-SNAPSHOT.jar
-	COPY ${JAR_FILE} app.jar
-	ENTRYPOINT ["java", "-jar", "/app.jar"]
-
 }
 
 group = 'com.codePush'
@@ -33,5 +26,6 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
 
 
